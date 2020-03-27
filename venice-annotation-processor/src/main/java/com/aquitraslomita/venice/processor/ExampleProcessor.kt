@@ -13,6 +13,7 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
@@ -65,7 +66,8 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
 
             val genInterfaceName = "CanInject${typeElement.simpleName}"
 
-            writeKotlin(pack, typeElement.asType(), genInterfaceName, filer)
+            writeKotlin(pack, typeElement.asType(), "${genInterfaceName}Kotlin", filer)
+            writeJava(pack, typeElement.asType(), "${genInterfaceName}Java", filer)
         }
 
         return true
@@ -94,6 +96,32 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
         fileBuilder.addType(interfaceSpec)
 
         return fileBuilder.build()
+    }
+
+    private fun writeJava(pack: String, annotatedElementType: TypeMirror, interfaceName: String, filer: Filer) {
+        val fileSpec = generateJavaSpec(pack, annotatedElementType, interfaceName)
+
+        fileSpec.writeTo(filer)
+    }
+
+    private fun generateJavaSpec(
+        pack: String,
+        annotatedElementType: TypeMirror,
+        interfaceName: String
+    ): com.squareup.javapoet.JavaFile {
+        val interfaceSpec = com.squareup.javapoet.TypeSpec.interfaceBuilder(interfaceName)
+            .addModifiers(Modifier.PUBLIC)
+            .addMethod(
+                com.squareup.javapoet.MethodSpec.methodBuilder("inject")
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                    .addParameter(com.squareup.javapoet.ParameterSpec.builder(
+                        com.squareup.javapoet.TypeName.get(annotatedElementType),
+                        "obj")
+                        .build())
+                    .build()
+            ).build()
+
+        return com.squareup.javapoet.JavaFile.builder(pack, interfaceSpec).build()
     }
 
     override fun getSupportedAnnotationTypes() = setOf(ExampleAnnotation::class.java.canonicalName)
