@@ -1,0 +1,1 @@
+/Users/rodrigo/src/misc-gili/rodrigo/GiliDemo/myannotationprocessor/venice-annotation-processor/build/classes/kotlin/main/com/aquitraslomita/venice/processor/ExampleAnnotationProcessor.class

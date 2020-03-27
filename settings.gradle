@@ -1,0 +1,5 @@
+include 'venice-annotation'
+include 'venice-annotation-processor'
+include 'venice-generation'
+include 'venice-repro'
+

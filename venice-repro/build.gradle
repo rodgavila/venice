@@ -1,0 +1,17 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "com.google.dagger:dagger:2.25.4"
+    kapt "com.google.dagger:dagger-compiler:2.25.4"
+
+    implementation project(':venice-annotation')
+    kapt project(':venice-annotation-processor')
+
+    implementation 'com.squareup:javapoet:1.12.1'
+    implementation 'com.squareup:kotlinpoet:1.5.0'
+}
